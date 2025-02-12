@@ -1,5 +1,6 @@
 # compiled output
 /lib
+/css
 /node_modules
 tsconfig.tsbuildinfo
 
