@@ -1,0 +1,49 @@
+{
+  "name": "@dynamic-glsp/client",
+  "version": "1.0.1",
+  "description": "Custom GLSP instance for dynamic model language support. This is the client.",
+  "author": "Giuliano Marinelli",
+  "license": "MIT",
+  "main": "lib/index",
+  "types": "lib/index",
+  "files": [
+    "src",
+    "lib",
+    "css",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf lib && tsc -b && sass src/scss:css",
+    "watch": "concurrently \"tsc -w --preserveWatchOutput\" \"sass src/scss:css --watch\"",
+    "prepack": "npm run build",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "@vscode/codicons": "^0.0.36"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "concurrently": "^9.1.2",
+    "prettier": "^3.4.2",
+    "rimraf": "^6.0.1",
+    "sass": "^1.84.0",
+    "typescript": "^5.7.3"
+  },
+  "peerDependencies": {
+    "@dynamic-glsp/protocol": ">=1.0.0",
+    "@eclipse-glsp/client": ">=2.3.0",
+    "@eclipse-glsp/protocol": ">=2.3.0",
+    "inversify": ">=6.2.2"
+  },
+  "homepage": "https://github.com/giuliano-marinelli/dynamic-glsp-client#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/giuliano-marinelli/dynamic-glsp-client"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,132 @@
+$background: #fff;
+$base: #000;
+
+.sprotty {
+  position: relative;
+  width: calc(100% - 1px);
+  height: calc(100% - 1px);
+
+  > .tool-palette {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    min-width: 200px;
+  }
+
+  > .minimize-palette-button {
+    top: 10px;
+    right: 25px;
+  }
+
+  > .inspector {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 350px;
+    max-height: calc(100% - 40px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    transform: scaleY(1);
+    transform-origin: top;
+    z-index: 1000;
+    background-color: rgba($background, 0.7);
+    user-select: none;
+    color: $base;
+    transition: transform 0.2s ease;
+    border: 10px solid;
+    border-color: rgba($background, 0.7);
+    backdrop-filter: blur(5px);
+  }
+
+  > .inspector.collapsed {
+    transform: scaleY(0);
+  }
+
+  > .inspector * {
+    user-select: none;
+  }
+
+  > .inspector .form-container {
+    margin: 0 0.75rem 0.5rem 0.75rem;
+  }
+
+  > .inspector table tr {
+    color: $base;
+  }
+
+  > .inspector .vertical-layout {
+    gap: 0px;
+  }
+
+  > .inspector .mat-mdc-form-field-infix {
+    margin-top: 20px;
+  }
+
+  > .inspector .mat-mdc-text-field-wrapper {
+    padding: 0px;
+  }
+
+  > .inspector .no-selection {
+    text-align: center;
+  }
+
+  [aria-label='Diagram'] {
+    outline: none;
+  }
+
+  > .sprotty-empty,
+  > [aria-label='Diagram'] > .sprotty-graph,
+  > [aria-label='Diagram'] > .sprotty-graph:focus {
+    width: calc(100% - 1px);
+    height: calc(100% - 1px);
+    position: relative;
+    overflow: hidden;
+    border-style: none;
+    outline: none;
+  }
+
+  > .label-edit {
+    z-index: 1;
+    margin-top: -60px;
+  }
+}
+
+.sprotty-graph {
+  .node > .sprotty-node {
+    fill: $base;
+    stroke-width: 1.5px;
+    cursor: pointer;
+  }
+
+  .node > .sprotty-node:not(.selected) {
+    stroke: $base;
+  }
+
+  .node .label {
+    fill: $background;
+    cursor: pointer;
+  }
+
+  .sprotty-edge {
+    cursor: pointer;
+  }
+
+  .sprotty-edge:not(.selected),
+  .sprotty-edge.feedback-edge {
+    stroke: $base;
+  }
+
+  .sprotty-edge .label {
+    fill: $base;
+    cursor: pointer;
+  }
+}
+
+.sprotty-hidden {
+  position: fixed;
+}
+
+.cdk-describedby-message-container,
+.cdk-overlay-container {
+  position: fixed;
+}
