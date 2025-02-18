@@ -3,8 +3,6 @@ $base: #000;
 
 .sprotty {
   position: relative;
-  width: calc(100% - 1px);
-  height: calc(100% - 1px);
 
   > .tool-palette {
     position: absolute;
@@ -75,10 +73,10 @@ $base: #000;
   }
 
   > .sprotty-empty,
+  > .sprotty-graph,
   > [aria-label='Diagram'] > .sprotty-graph,
+  > .sprotty-graph:focus,
   > [aria-label='Diagram'] > .sprotty-graph:focus {
-    width: calc(100% - 1px);
-    height: calc(100% - 1px);
     position: relative;
     overflow: hidden;
     border-style: none;
