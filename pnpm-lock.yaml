@@ -29,8 +29,8 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2(prettier@3.5.0)
       prettier:
-        specifier: ^3.4.2
-        version: 3.5.0
+        specifier: ^3.5.2
+        version: 3.5.2
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
@@ -368,6 +368,11 @@ packages:
 
   prettier@3.5.0:
     resolution: {integrity: sha512-quyMrVt6svPS7CjQ9gKb3GLEX/rl3BCL2oa/QkNcXv4YNVBC9olt3s+H7ukto06q7B1Qz46PbrKLO34PR6vXcA==}
+    engines: {node: '>=14'}
+    hasBin: true
+
+  prettier@3.5.2:
+    resolution: {integrity: sha512-lc6npv5PH7hVqozBR7lkBNOGXV9vMwROAPlumdBkX0wTbbzPu/U1hk5yL8p2pt4Xoc+2mkT8t/sow2YrV/M5qg==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -817,6 +822,8 @@ snapshots:
   picocolors@1.1.1: {}
 
   prettier@3.5.0: {}
+
+  prettier@3.5.2: {}
 
   readable-stream@3.6.2:
     dependencies:

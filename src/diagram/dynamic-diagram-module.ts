@@ -1,3 +1,4 @@
+import { DynamicTypes } from '@dynamic-glsp/protocol';
 import {
   ConsoleLogger,
   ContainerConfiguration,
@@ -10,16 +11,20 @@ import {
   GLSPProjectionView,
   GLabel,
   GLabelView,
+  GNode,
+  HBoxLayouterExt,
   IDiagramOptions,
   IHelperLineOptions,
   LogLevel,
   PolylineEdgeViewWithGapsOnIntersections,
   STANDALONE_MODULE_CONFIG,
   TYPES,
+  VBoxLayouterExt,
   ViewerOptions,
   accessibilityModule,
   bindOrRebind,
   configureDefaultModelElements,
+  configureModelElement,
   createDiagramOptionsModule,
   edgeEditToolModule,
   exportModule,
@@ -32,8 +37,11 @@ import {
 } from '@eclipse-glsp/client';
 
 import { Inspector } from '../features/inspector';
+import { DynamicHBoxLayouter, DynamicLayouter, DynamicVBoxLayouter } from '../features/layouters';
 import { SaveModelKeyboardListener } from '../features/save-model';
 import { SvgExporter } from '../features/svg-exporter';
+import { GShape } from '../model';
+import { DynamicNodeView, DynamicShapeView } from '../views/dynamic-views';
 import { ExternalServices } from './dynamic-external-services';
 import { StartupConfiguration } from './dynamic-startup-configurations';
 import { Container, ContainerModule } from 'inversify';
@@ -45,6 +53,11 @@ export const dynamicDiagramModule = (diagramOptions: IDiagramOptions) =>
     // configure utilities, actions and services that needs to be loaded previously to the model
     bind(StartupConfiguration).toSelf().inSingletonScope();
     bind(TYPES.IDiagramStartup).toService(StartupConfiguration);
+
+    // configure custom layouters (for allow absolute and relative layout combined)
+    bindOrRebind(context, TYPES.Layouter).to(DynamicLayouter).inSingletonScope();
+    bindOrRebind(context, VBoxLayouterExt).to(DynamicVBoxLayouter);
+    bindOrRebind(context, HBoxLayouterExt).to(DynamicHBoxLayouter);
 
     // configure the custom svg exporter to allow get svg from the GModel
     bind(TYPES.SvgExporter).to(SvgExporter).inSingletonScope();
@@ -71,7 +84,7 @@ export const dynamicDiagramModule = (diagramOptions: IDiagramOptions) =>
       const options: IHelperLineOptions = {};
       // skip compartments for alignment which are only used for structure
       options.alignmentElementFilter = (element) =>
-        DEFAULT_ALIGNABLE_ELEMENT_FILTER(element) && !(element instanceof GCompartment);
+        DEFAULT_ALIGNABLE_ELEMENT_FILTER(element) && !(element instanceof GCompartment) && !(element instanceof GShape);
       return options;
     });
 
@@ -82,12 +95,18 @@ export const dynamicDiagramModule = (diagramOptions: IDiagramOptions) =>
     if (diagramOptions.editMode === 'editable')
       overrideModelElement(context, DefaultTypes.GRAPH, GGraph, GLSPProjectionView);
 
+    // configure the GNode (graphical model node element) with the DynamicNodeView view to render nodes
+    overrideModelElement(context, DefaultTypes.NODE, GNode, DynamicNodeView);
+
     // configure the GLabel (graphical model label element) with the GLabelView (default view for rendering labels)
     // and enable the edit label feature (double click on label to edit)
     overrideModelElement(context, DefaultTypes.LABEL, GLabel, GLabelView /*, { enable: [editLabelFeature] }*/); // disable edit label feature for now
 
     // configure the GEdge (graphical model edge element) with the PolylineEdgeViewWithGapsOnIntersections view to render edges with gaps on intersections
     overrideModelElement(context, DefaultTypes.EDGE, GEdge, PolylineEdgeViewWithGapsOnIntersections);
+
+    // configure GShape (graphical model shape element) with the DynamicShapeView view to render shapes
+    configureModelElement(context, DynamicTypes.SHAPE, GShape, DynamicShapeView);
   });
 
 export function initializeDynamicDiagramContainer(

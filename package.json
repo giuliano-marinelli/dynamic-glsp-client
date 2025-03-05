@@ -22,12 +22,13 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "@vscode/codicons": "^0.0.36"
+    "@vscode/codicons": "^0.0.36",
+    "snabbdom": "3.5.1"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "concurrently": "^9.1.2",
-    "prettier": "^3.4.2",
+    "prettier": "^3.5.2",
     "rimraf": "^6.0.1",
     "sass": "^1.84.0",
     "typescript": "^5.7.3"

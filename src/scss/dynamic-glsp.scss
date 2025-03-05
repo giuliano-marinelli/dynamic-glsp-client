@@ -1,5 +1,6 @@
 $background: #fff;
 $base: #000;
+$selected: #0078d4;
 
 .sprotty {
   position: relative;
@@ -90,14 +91,12 @@ $base: #000;
 }
 
 .sprotty-graph {
-  .node > .sprotty-node {
-    fill: $base;
-    stroke-width: 1.5px;
+  .node {
     cursor: pointer;
   }
 
-  .node > .sprotty-node:not(.selected) {
-    stroke: $base;
+  .node rect.selected {
+    stroke: $selected;
   }
 
   .node .label {
@@ -116,6 +115,10 @@ $base: #000;
 
   .sprotty-edge .label {
     fill: $base;
+    cursor: pointer;
+  }
+
+  .shape {
     cursor: pointer;
   }
 }

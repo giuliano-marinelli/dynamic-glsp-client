@@ -5,4 +5,5 @@ export * from './diagram/dynamic-startup-configurations';
 export * from './features/inspector';
 export * from './features/save-model';
 export * from './features/svg-exporter';
-// export * from './views/dynamic-views';
+export * from './views/dynamic-views';
+export * from './model';
