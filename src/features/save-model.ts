@@ -1,9 +1,8 @@
 import { SaveModelAction } from '@dynamic-glsp/protocol';
 import { Action, GModelRoot, IDiagramOptions, KeyListener, TYPES, matchesKeystroke } from '@eclipse-glsp/client';
 
-import { inject, injectable } from 'inversify';
-
 import { SvgExporter } from './svg-exporter';
+import { inject, injectable } from 'inversify';
 
 @injectable()
 export class SaveModelKeyboardListener extends KeyListener {
