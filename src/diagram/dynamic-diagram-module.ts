@@ -33,13 +33,15 @@ import {
   initializeDiagramContainer,
   overrideModelElement,
   saveModule,
-  toolPaletteModule
+  toolPaletteModule,
+  typeHintsModule
 } from '@eclipse-glsp/client';
 
 import { Inspector } from '../features/inspector';
 import { DynamicHBoxLayouter, DynamicLayouter, DynamicVBoxLayouter } from '../features/layouters';
 import { SaveModelKeyboardListener } from '../features/save-model';
 import { SvgExporter } from '../features/svg-exporter';
+import { dynamicTypeHintsModule } from '../features/type-hint';
 import { GShape } from '../model';
 import { DynamicNodeView, DynamicShapeView } from '../views/dynamic-views';
 import { ExternalServices } from './dynamic-external-services';
@@ -141,8 +143,9 @@ export function initializeDynamicDiagramContainer(
               edgeEditToolModule // load bindings for edge editing tool
             ]
           : [],
-      remove: [toolPaletteModule, saveModule, exportModule]
+      remove: [toolPaletteModule, saveModule, exportModule, typeHintsModule]
     },
+    dynamicTypeHintsModule,
     dynamicDiagramModule(diagramOptions), // load all the bindings for the dynamic diagram language
     ...extraModules
   );
