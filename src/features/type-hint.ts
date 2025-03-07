@@ -47,7 +47,9 @@ export class DynamicApplyTypeHintsCommand extends ApplyTypeHintsCommand {
     const type = element['args']?.elementType ? element['args']?.elementType : element.type;
     let features = this.typeHintFeatures.get(type);
     if (!features) {
-      features = createFeatureSet(Array.from(element.features as Set<symbol>));
+      features = element.features
+        ? createFeatureSet(Array.from(element.features as Set<symbol>))
+        : createFeatureSet([]);
       this.typeHintFeatures.set(type, features);
     }
     return features;
