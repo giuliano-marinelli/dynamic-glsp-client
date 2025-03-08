@@ -2,9 +2,9 @@ import { ChangeModelOperation } from '@dynamic-glsp/protocol';
 import {
   AbstractUIExtension,
   EditorContextService,
-  GEdge,
+  FeatureModule,
+  GModelElement,
   GModelRoot,
-  GNode,
   IActionDispatcher,
   IDiagramOptions,
   IDiagramStartup,
@@ -13,64 +13,49 @@ import {
   TYPES
 } from '@eclipse-glsp/client';
 
-import { ExternalServices } from '../diagram/dynamic-external-services';
+import { EventEmitter } from 'events';
 import { inject, injectable } from 'inversify';
 
-export const IInspector = Symbol('IInspector');
+export const dynamicInspectorModule = new FeatureModule(
+  (bind, _unbind) => {
+    bind(DynamicInspector).toSelf().inSingletonScope();
+    bind(TYPES.IUIExtension).toService(DynamicInspector);
+    bind(TYPES.IDiagramStartup).toService(DynamicInspector);
+    bind(TYPES.ISelectionListener).toService(DynamicInspector);
+  },
+  { featureId: Symbol('inspector') }
+);
 
 @injectable()
-export class Inspector extends AbstractUIExtension implements ISelectionListener, IDiagramStartup {
+export class DynamicInspector extends AbstractUIExtension implements ISelectionListener, IDiagramStartup {
+  @inject(TYPES.IDiagramOptions)
+  protected diagramOptions!: IDiagramOptions;
+
   @inject(TYPES.IActionDispatcher)
-  protected readonly actionDispatcher!: IActionDispatcher;
+  protected actionDispatcher!: IActionDispatcher;
 
   @inject(EditorContextService)
   protected editorContext!: EditorContextService;
 
-  @inject(ExternalServices)
-  protected services!: ExternalServices;
-
-  @inject(TYPES.IDiagramOptions)
-  protected diagramOptions!: IDiagramOptions;
-
   static readonly ID = 'inspector';
 
   id() {
-    return Inspector.ID;
+    return DynamicInspector.ID;
   }
 
   containerClass() {
-    return Inspector.ID;
+    return DynamicInspector.ID;
   }
 
-  exampleData = {
-    name: 'John Doe'
-  };
+  onElementChange: EventEmitter = new EventEmitter();
 
-  exampleSchema = {
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string'
-      }
-    }
-  };
+  async updateElement(elementId: string, newModel: any) {
+    console.log('Model Changed', elementId, newModel);
+    const modelChangeOperation = ChangeModelOperation.create({ elementId, newModel });
+    await this.actionDispatcher.dispatch(modelChangeOperation);
+  }
 
-  exampleUiSchema = {
-    type: 'VerticalLayout',
-    elements: [
-      {
-        type: 'Control',
-        scope: '#/properties/name'
-      }
-    ]
-  };
-
-  protected initializeContents(containerElement: HTMLElement): void {
-    this.services.inspectorElementChanged = async (elementId: string, newModel: any) => {
-      console.log('Model Changed', elementId, newModel);
-      const modelChangeOperation = ChangeModelOperation.create({ elementId, newModel });
-      await this.actionDispatcher.dispatch(modelChangeOperation);
-    };
+  initializeContents(containerElement: HTMLElement): void {
     this.setNoSelection();
   }
 
@@ -133,18 +118,13 @@ export class Inspector extends AbstractUIExtension implements ISelectionListener
     }
 
     // check if the inspectorCreateElement method is defined and call it
-    if (this.services.inspectorCreateElement) {
-      this.services.inspectorCreateElement(
-        formContainer,
-        selectedElement.id,
-        selectedElement.args?.aModel,
-        selectedElement.args?.model
-      );
-    } else {
-      console.error('inspectorCreateElement method not provided to GLSP ExternalServices.');
-      this.setNoSelection();
-      return;
-    }
+    this.onElementChange.emit(
+      'select',
+      formContainer,
+      selectedElement.id,
+      selectedElement.args?.aModel,
+      selectedElement.args?.model
+    );
 
     this.containerElement.classList.remove('collapsed');
   }
@@ -152,15 +132,7 @@ export class Inspector extends AbstractUIExtension implements ISelectionListener
   /**
    * Get the GModel element for the given id and root.
    */
-  protected getGModelElement(root: Readonly<GModelRoot>, id: string): GNode | GEdge | undefined {
-    const element = root.children.find((child) => child.id === id);
-    switch (element?.type) {
-      case 'node':
-        return element as GNode;
-      case 'edge':
-        return element as GEdge;
-      default:
-        return undefined;
-    }
+  protected getGModelElement(root: Readonly<GModelRoot>, id: string): GModelElement | undefined {
+    return root?.children?.find((child) => child.id === id) as GModelElement;
   }
 }

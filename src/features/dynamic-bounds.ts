@@ -2,20 +2,61 @@ import {
   Bounds,
   BoundsData,
   Dimension,
+  FeatureModule,
+  FreeFormLayouter,
+  GLSPHiddenBoundsUpdater,
   GModelElement,
   GParentElement,
   HBoxLayoutOptionsExt,
+  HBoxLayouter,
   HBoxLayouterExt,
+  HiddenBoundsUpdater,
   LayoutContainer,
+  LayoutRegistry,
   LayouterExt,
+  LocalComputedBoundsCommand,
   Point,
+  PositionSnapper,
+  RequestBoundsCommand,
+  SetBoundsCommand,
+  SetBoundsFeedbackCommand,
   StatefulLayouterExt,
+  TYPES,
   VBoxLayoutOptionsExt,
+  VBoxLayouter,
   VBoxLayouterExt,
+  bindAsService,
+  configureCommand,
+  configureLayout,
   isLayoutableChild
 } from '@eclipse-glsp/client';
 
 import { injectable } from 'inversify';
+
+export const dynamicBoundsModule = new FeatureModule(
+  (bind, _unbind, isBound, _rebind) => {
+    const context = { bind, isBound };
+    configureCommand(context, SetBoundsCommand);
+    configureCommand(context, RequestBoundsCommand);
+    bind(HiddenBoundsUpdater).toSelf().inSingletonScope();
+    bindAsService(context, TYPES.HiddenVNodePostprocessor, GLSPHiddenBoundsUpdater);
+
+    configureCommand(context, LocalComputedBoundsCommand);
+    configureCommand(context, SetBoundsFeedbackCommand);
+
+    bind(TYPES.Layouter).to(DynamicLayouter).inSingletonScope();
+    bind(TYPES.LayoutRegistry).to(LayoutRegistry).inSingletonScope();
+
+    configureLayout(context, VBoxLayouter.KIND, DynamicVBoxLayouter);
+    configureLayout(context, HBoxLayouter.KIND, DynamicHBoxLayouter);
+    configureLayout(context, FreeFormLayouter.KIND, FreeFormLayouter);
+
+    // backwards compatibility
+    // eslint-disable-next-line deprecation/deprecation
+    bind(PositionSnapper).toSelf();
+  },
+  { featureId: Symbol('bounds') }
+);
 
 export interface DynamicVBoxLayoutOptions extends VBoxLayoutOptionsExt {
   absolute?: boolean;

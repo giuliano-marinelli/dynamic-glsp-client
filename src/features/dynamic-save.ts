@@ -1,13 +1,29 @@
 import { SaveModelAction } from '@dynamic-glsp/protocol';
-import { Action, GModelRoot, IDiagramOptions, KeyListener, TYPES, matchesKeystroke } from '@eclipse-glsp/client';
+import {
+  Action,
+  FeatureModule,
+  GModelRoot,
+  IDiagramOptions,
+  KeyListener,
+  TYPES,
+  bindAsService,
+  matchesKeystroke
+} from '@eclipse-glsp/client';
 
-import { SvgExporter } from './svg-exporter';
+import { DynamicSvgExporter } from './dynamic-export';
 import { inject, injectable } from 'inversify';
+
+export const dynamicSaveModule = new FeatureModule(
+  (bind) => {
+    bindAsService(bind, TYPES.KeyListener, SaveModelKeyboardListener);
+  },
+  { featureId: Symbol('save') }
+);
 
 @injectable()
 export class SaveModelKeyboardListener extends KeyListener {
   @inject(TYPES.SvgExporter)
-  protected svgExporter?: SvgExporter;
+  protected svgExporter?: DynamicSvgExporter;
 
   @inject(TYPES.IDiagramOptions)
   protected diagramOptions!: IDiagramOptions;

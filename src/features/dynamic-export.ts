@@ -1,6 +1,24 @@
-import { GLSPSvgExporter } from '@eclipse-glsp/client';
+import {
+  ExportSvgCommand,
+  ExportSvgPostprocessor,
+  FeatureModule,
+  GLSPSvgExporter,
+  TYPES,
+  bindAsService,
+  configureCommand
+} from '@eclipse-glsp/client';
 
-export class SvgExporter extends GLSPSvgExporter {
+export const dynamicExportModule = new FeatureModule(
+  (bind, _unbind, isBound) => {
+    const context = { bind, isBound };
+    bindAsService(context, TYPES.HiddenVNodePostprocessor, ExportSvgPostprocessor);
+    configureCommand(context, ExportSvgCommand);
+    bind(TYPES.SvgExporter).to(DynamicSvgExporter).inSingletonScope();
+  },
+  { featureId: Symbol('export') }
+);
+
+export class DynamicSvgExporter extends GLSPSvgExporter {
   getSvg(): string | undefined {
     if (typeof document == 'undefined') {
       this.log.warn(this, `Document is not available. Cannot export SVG.`);

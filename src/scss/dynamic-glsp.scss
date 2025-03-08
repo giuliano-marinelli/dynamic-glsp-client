@@ -92,7 +92,7 @@ $selected: #0078d4;
 
 .sprotty-graph {
   .node {
-    cursor: pointer;
+    // cursor: pointer;
   }
 
   .node rect.selected {
@@ -101,11 +101,11 @@ $selected: #0078d4;
 
   .node .label {
     fill: $background;
-    cursor: pointer;
+    // cursor: pointer;
   }
 
   .sprotty-edge {
-    cursor: pointer;
+    // cursor: pointer;
   }
 
   .sprotty-edge:not(.selected),
@@ -115,11 +115,11 @@ $selected: #0078d4;
 
   .sprotty-edge .label {
     fill: $base;
-    cursor: pointer;
+    // cursor: pointer;
   }
 
   .shape {
-    cursor: pointer;
+    // cursor: pointer;
   }
 }
 
